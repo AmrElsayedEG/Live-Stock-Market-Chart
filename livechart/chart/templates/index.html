@@ -1,0 +1,50 @@
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+<script>
+
+let socket = new WebSocket('ws://localhost:8000/ws/data/');
+socket.onopen = function(e){
+alert('Open');
+}
+socket.onmessage = function(e){
+var recData = JSON.parse(e.data);
+newdata = dataobj["data"]["datasets"][0]["data"];
+newdata.shift();
+newdata.push(recData.value);
+dataobj["data"]["datasets"][0]["data"] = newdata;
+window.myLine.update();
+}
+
+socket.onclose = function(e){
+alert('Close');
+}
+</script>
+
+<canvas id="myChart"></canvas>
+<script>
+var dataobj = {
+    // The type of chart we want to create
+    type: 'line',
+
+    // The data for our dataset
+    data: {
+        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+        datasets: [{
+            label: 'My First dataset',
+            backgroundColor: 'rgb(255, 99, 132)',
+            borderColor: 'rgb(255, 99, 132)',
+            data: [0,0,0,0,0,0,0]
+        }]
+    },
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero: true
+                }
+            }]
+        }
+    }
+};
+var ctx = document.getElementById('myChart').getContext('2d');
+window.myLine = new Chart(ctx, dataobj);
+</script>
